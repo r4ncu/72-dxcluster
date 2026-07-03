@@ -165,14 +165,16 @@ function getPrefix(cs) {
 function getFlagUrl(cs) {
   if (!cs) return "";
   const pfx = getPrefix(cs);
-  const iso = PREFIX_TO_ISO[pfx];
+  let iso = PREFIX_TO_ISO[pfx];
+  if (!iso && pfx.length === 2) iso = PREFIX_TO_ISO[pfx[0]];
   return iso ? "https://flagcdn.com/w40/" + iso + ".png" : "";
 }
 
 function getCountry(cs) {
   if (!cs) return "";
   const pfx = getPrefix(cs);
-  const iso = PREFIX_TO_ISO[pfx];
+  let iso = PREFIX_TO_ISO[pfx];
+  if (!iso && pfx.length === 2) iso = PREFIX_TO_ISO[pfx[0]];
   return ISO_TO_RU[iso] || "";
 }
 

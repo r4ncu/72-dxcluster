@@ -74,9 +74,10 @@ footer a:hover{color:var(--accent)}
   .add-form{padding:8px}
   .add-form .field{min-width:calc(50% - 4px);flex:0 0 calc(50% - 4px)}
   .add-form .btn-send{width:100%}
-  table{font-size:12px}
+  table{font-size:12px;table-layout:auto}
   th,td{padding:5px 8px}
   .col-comment{max-width:100px}
+  td{overflow:visible;white-space:nowrap}
 }
 </style>
 </head>
@@ -123,12 +124,12 @@ footer a:hover{color:var(--accent)}
   <table id="spots-table">
     <thead>
       <tr>
-        <th data-col="de" class="sorted">DE <span class="arr">▲</span></th>
+        <th data-col="de">DE <span class="arr">⇅</span></th>
         <th data-col="freq" class="col-freq-hdr">Freq <span class="arr">⇅</span></th>
         <th data-col="dx">DX <span class="arr">⇅</span></th>
         <th data-col="country">Country <span class="arr">⇅</span></th>
         <th data-col="comment">Comment <span class="arr">⇅</span></th>
-        <th data-col="time" class="col-utc-hdr">UTC <span class="arr">⇅</span></th>
+        <th data-col="time" class="col-utc-hdr sorted">UTC <span class="arr">▼</span></th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -296,7 +297,7 @@ async function loadRBN() {
 
 async function loadUserSpots() {
   try {
-    const resp = await fetch("/api/user-spots");
+    const resp = await fetch("/api/user-spots?age=" + RBN_AGE);
     const data = await resp.json();
     const newIds = new Set(data.map(s => String(s.id)));
 

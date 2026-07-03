@@ -94,8 +94,11 @@ def api_rbn():
 
 @app.route("/api/user-spots", methods=["GET"])
 def get_user_spots():
+    age = int(request.args.get("age", "1800"))
+    cutoff = int(time.time()) - age
     with _user_spots_lock:
-        return jsonify(_user_spots[-200:])
+        filtered = [s for s in _user_spots if s["time"] >= cutoff]
+        return jsonify(filtered[-200:])
 
 
 @app.route("/api/user-spots", methods=["POST"])

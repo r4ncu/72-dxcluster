@@ -154,12 +154,12 @@ function getPrefix(cs) {
   const up = cs.toUpperCase();
   const m = up.match(/^(\d?[A-Z]+\d*)/);
   const raw = m ? m[1] : up.replace(/[^A-Z0-9]/g, "").slice(0, 3);
-  // Try full prefix first (e.g. Z35), then without trailing digits (e.g. Z3), then letters only (e.g. Z)
-  if (PREFIX_TO_ISO[raw]) return raw;
-  const noTrailing = raw.replace(/\d+$/, "");
-  if (PREFIX_TO_ISO[noTrailing]) return noTrailing;
-  const lettersOnly = noTrailing.replace(/[^A-Z]/g, "");
-  return lettersOnly || raw.slice(0, 2);
+  // Try progressively shorter prefixes: Z35 → Z3 → Z
+  for (let len = raw.length; len >= 1; len--) {
+    const try_ = raw.slice(0, len);
+    if (PREFIX_TO_ISO[try_]) return try_;
+  }
+  return raw.slice(0, 1);
 }
 
 function getFlagUrl(cs) {

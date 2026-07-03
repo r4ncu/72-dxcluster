@@ -151,23 +151,28 @@ const RBN_AGE = 1800;
 const RBN_POLL = 5000;
 
 function getPrefix(cs) {
-  const m = cs.toUpperCase().match(/^(\d?[A-Z]+)/);
-  return m ? m[1].slice(0, 2) : cs.replace(/[^A-Z0-9]/g, "").slice(0, 2);
+  const up = cs.toUpperCase();
+  const m = up.match(/^(\d?[A-Z]+\d*)/);
+  const raw = m ? m[1] : up.replace(/[^A-Z0-9]/g, "").slice(0, 3);
+  // Try full prefix first (e.g. Z35), then without trailing digits (e.g. Z3), then letters only (e.g. Z)
+  if (PREFIX_TO_ISO[raw]) return raw;
+  const noTrailing = raw.replace(/\d+$/, "");
+  if (PREFIX_TO_ISO[noTrailing]) return noTrailing;
+  const lettersOnly = noTrailing.replace(/[^A-Z]/g, "");
+  return lettersOnly || raw.slice(0, 2);
 }
 
 function getFlagUrl(cs) {
   if (!cs) return "";
   const pfx = getPrefix(cs);
-  let iso = PREFIX_TO_ISO[pfx];
-  if (!iso && pfx.length === 2) iso = PREFIX_TO_ISO[pfx[0]];
+  const iso = PREFIX_TO_ISO[pfx];
   return iso ? "https://flagcdn.com/w40/" + iso + ".png" : "";
 }
 
 function getCountry(cs) {
   if (!cs) return "";
   const pfx = getPrefix(cs);
-  let iso = PREFIX_TO_ISO[pfx];
-  if (!iso && pfx.length === 2) iso = PREFIX_TO_ISO[pfx[0]];
+  const iso = PREFIX_TO_ISO[pfx];
   return ISO_TO_RU[iso] || "";
 }
 

@@ -43,9 +43,10 @@ def _rbn_fetch(params):
         current_hash = _rbn_hash
     params["h"] = current_hash
     resp = _session.get(RBN_API, params=params, timeout=10)
-    if resp.status_code != 200:
+    try:
+        data = resp.json()
+    except Exception:
         return None
-    data = resp.json()
     if isinstance(data, dict) and data.get("error") == 888:
         new_hash = data.get("ver_h")
         if new_hash:
@@ -54,8 +55,10 @@ def _rbn_fetch(params):
                 print(f"[RBN] Hash updated: {new_hash}", flush=True)
             params["h"] = new_hash
             resp = _session.get(RBN_API, params=params, timeout=10)
-            if resp.status_code == 200:
+            try:
                 return resp.json()
+            except Exception:
+                return None
         return None
     return data
 
